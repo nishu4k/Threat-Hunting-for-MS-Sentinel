@@ -1,0 +1,11 @@
+##Telegram can be used as a C2 channel, this can be done by leveraging the Telegram API. Multiple actors have used this in the wild, also for exfiltration methods (see references). With this detection rule we focus on the api if telegram (api.telegram.org).
+
+DeviceNetworkEvents
+| where RemoteUrl contains "api.telegram.org"
+| project 
+    TimeGenerated,
+    DeviceName,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine,
+    InitiatingProcessAccountName,
+    InitiatingProcessAccountDomain
