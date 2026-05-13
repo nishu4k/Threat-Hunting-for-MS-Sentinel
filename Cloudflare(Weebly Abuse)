@@ -1,0 +1,12 @@
+##Threat actors are actively leveraging Weebly’s free hosting platform to conduct credential harvesting and SEO poisoning attacks, targeting government and financial sectors.
+##These campaigns rely on:
+##Trusted platforms (Weebly, Cloudflare, TLS) to bypass controls
+##SEO poisoning instead of traditional phishing emails
+
+##Defender Querry
+let LoopBack = 10d;
+DeviceNetworkEvents
+| where RemoteUrl has_any ("weebly.com", "weeblysite.com")
+| where RemoteUrl has_any ("login", "verify", "secure", "update", "uae", "bank", "moi", "pass")
+| summarize count() by RemoteUrl, DeviceName
+| order by count_ desc
