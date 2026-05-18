@@ -1,0 +1,18 @@
+## To check the list of entites in the Email related alert. Resolving extended Json Properties. 
+## Give the count and list of all entities in table format. 
+
+
+SecurityAlert
+| where TimeGenerated >= ago(30d)
+| where AlertName contains "removed after delivery"
+| extend EntitiesDynamic = parse_json(Entities)
+| mv-expand EntitiesDynamic
+| extend
+    Sender = tostring(EntitiesDynamic.Sender),
+    Recipient = tostring(EntitiesDynamic.Recipient)
+| where isnotempty(Sender) or isnotempty(Recipient)
+| summarize AlertCount = count() by Sender, Recipient
+| top 10 by AlertCount desc
+
+## For Sentinel. 
+## Make sure to Change the AlertName Field according to your requirement to get more accurate results.  
