@@ -1,0 +1,19 @@
+## This querry checks weather the AWS cloud bucket is accessed via open internet and is exposed. 
+## Limited to AWS. 
+## Table being (AWS cloud trail)
+
+let PublicExposure =
+AWSCloudTrail
+| where EventName in ("PutBucketPolicy","PutBucketAcl","DeletePublicAccessBlock")
+| extend Req = tostring(RequestParameters)
+| where Req has "Principal\":\"*\" or Req has "AllUsers";
+let Access =
+AWSCloudTrail
+| where EventSource == "s3.amazonaws.com"
+| where EventName in ("GetObject","ListBucket");
+PublicExposure
+| join kind=inner Access on $left.Resources == $right.Resources
+| project TimeGenerated, EventName, UserIdentityArn, SourceIpAddress, Resources  
+
+## Make sure you edit the querry based on your attributes. 
+## Applicable to MS Sentinel
